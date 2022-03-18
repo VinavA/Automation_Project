@@ -25,5 +25,14 @@ sudo tar -cvf /tmp/$filename *.log
 cd ~
 aws s3 cp /tmp/$filename s3://${s3_bucket}/$filename
 
+fileSize=`ls /tmp/$tarfile -sh | awk {'print $1'}`
+if [ ! -f /var/www/html/inventory.html ]; then
+    touch /var/www/html/inventory.html
+	echo -e '\tLog Type\tDate Created\tType\tSize' >> /var/www/html/inventory.html
+fi
+echo -e '\thttpd-logs\t'$datetime'\ttar\t'$fileSize >> /var/www/html/inventory.html
 
-
+if [ ! -f /etc/cron.d/automation ]; then
+    touch /etc/cron.d/automation
+    echo '* * * * * root /root/Automation_Project/automation.sh' >> /etc/cron.d/automation
+fi
